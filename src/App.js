@@ -1,24 +1,35 @@
-import logo from './logo.svg';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import './App.css';
+import { GetAllTodo } from './hooks/queris/user';
+import { SendPost } from './hooks/mutations';
 
 function App() {
+  const queryClient = useQueryClient();
+  const { data, isPending, isLoading } = GetAllTodo()
+
+  console.log(data, isPending, isLoading)
+
+  const { mutate, } = SendPost()
+  const clickHandelr = () => {
+    const data = {
+      title: 'foo',
+      body: 'bar',
+      userId: 1,
+    }
+    mutate(data, {
+      onSuccess: (data) => {
+        console.log(data);
+        queryClient.invalidateQueries(['all-todos'])
+      },
+      onError: (error) => console.log(error)
+    })
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      parsa {data?.length}
+      <button onClick={clickHandelr}>Click</button>
+    </>
   );
 }
 
